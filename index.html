@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#202d45">
+<title>立诺量房工具</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+<div class="brand header-brand">
+  <div class="header-brand-info">
+    <div class="header-brand-title">
+      立诺 · 量房工具 <span class="sub"></span>
+    </div>
+    <div class="header-brand-author">立诺装饰 · 15662061321</div>
+  </div>
+
+  <input id="projectNameInp"
+    type="text"
+    style="font-size:12px;font-weight:normal;color:#536177;border:none;border-bottom:1px dashed #b9c4d2;background:transparent;outline:none;width:130px;min-width:0;max-width:130px;padding:0;margin:0;text-overflow:ellipsis;"
+    title="点击修改图纸名称"
+    placeholder="未命名图纸">
+</div>
+  <button class="headbtn" id="save" title="保存"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMTY3N2U4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTE5IDIxSDVhMiAyIDAgMCAxLTItMlY1YTIgMiAwIDAgMSAyLTJoMTFsNSA1djExYTIgMiAwIDAgMS0yIDJ6Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iMTcgMjEgMTcgMTMgNyAxMyA3IDIxIj48L3BvbHlsaW5lPjxwb2x5bGluZSBwb2ludHM9IjcgMyA3IDggMTUgOCI+PC9wb2x5bGluZT48L3N2Zz4=" width="18" height="18" alt="保存"></button>
+  <button class="headbtn" id="btnBluetooth" title="连接蓝牙测距仪" aria-label="蓝牙测距" aria-pressed="false"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"></polyline></svg></button>
+  <button class="headbtn" id="clearAll" title="新建图纸">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+  </button>
+<button class="headbtn" id="menu">•••</button>
+</header>
+
+<div id="work">
+  <canvas id="board"></canvas>
+  <div class="hud">
+    <span id="heightSpan" style="display:flex; align-items:center; pointer-events:auto; cursor:pointer;" title="点击修改层高">
+      层高：<input id="heightInp" type="number" value="2700" style="width:50px; border:none; background:transparent; font-size:12px; font-weight:700; padding:0; margin:0 2px; text-align:center; pointer-events:auto; outline:none; -webkit-appearance:none;" readonly>mm
+    </span>
+    <button id="offsetOuter" class="headbtn" title="按默认墙厚偏移外墙线" aria-label="完成外墙偏移" style="pointer-events:auto;padding:5px 8px;font-size:15px;color:#16834a;">✓</button>
+    <button id="fit" class="headbtn" title="适配画布" style="pointer-events:auto;padding:5px 10px;font-size:12px;">适配</button>
+  </div>
+  <div class="top-actions" id="tip">
+    <button id="undo" title="撤销 (Ctrl+Z)" aria-label="撤销"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h9a7 7 0 0 1 0 14h-2"/></svg></button>
+    <button id="redo" title="恢复 (Ctrl+Y)" aria-label="重做"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 14 5-5-5-5"/><path d="M20 9h-9a7 7 0 0 0 0 14h2"/></svg></button>
+  </div>
+  <!-- 画布右下角旋转按钮 -->
+  <button id="rotateCanvas" class="headbtn" type="button"
+    title="手动顺时针旋转画布90度"
+    aria-label="手动旋转画布90度"
+    style="pointer-events:auto;padding:5px 8px;font-size:12px;">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M20 10a8 8 0 1 0-2 7"/>
+      <path d="M20 4v6h-6"/>
+    </svg>
+  </button>
+  </div>
+
+  <div class="panel" id="panel">
+    <div class="phead" id="phead">
+<button id="uiSideToggle" title="切换左右手操作"
+style="background:#eef2f7;border:none;border-radius:7px;width:36px;height:30px;
+display:flex;align-items:center;justify-content:center;margin-right:8px;
+color:var(--blue);cursor:pointer;flex-shrink:0;white-space:nowrap;"
+aria-label="当前左手操作，点击切换到右手">左手</button>
+      <span id="ptitle" style="flex:1;">墙体长度</span>
+      <button class="close" id="x" style="display:none;">×</button>
+    </div>
+    <div id="body"></div>
+  </div>
+  
+  <!-- 侧边悬浮工具栏：放置开关、确认按钮和数字键盘 -->
+  <div id="rightTools" class="pos-left">
+    <div id="sideToggles"></div>
+    <div id="globalActions"></div>
+  </div>
+</div>
+
+<div class="bottom" style="position:relative;">
+
+  <!-- 构件面板 -->
+  <div class="symbol-panel" id="componentPanel">
+
+    <button data-tool="special" title="特殊标识">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="4" y="5" width="16" height="14"/>
+        <path d="M4 5l16 14"/>
+      </svg></b>
+      <span>特殊标识</span>
+    </button>
+
+    <button data-tool="powerBox" title="强电箱">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round">
+        <rect x="5" y="5" width="14" height="14"/>
+        <path d="M9 9L15 15M15 9L9 15"/>
+      </svg></b>
+      <span>强电箱</span>
+    </button>
+
+    <button data-tool="weakBox" title="弱电箱">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <rect x="5" y="5" width="14" height="14"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg></b>
+      <span>弱电箱</span>
+    </button>
+
+    <button data-tool="column" title="柱">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="currentColor">
+        <rect x="6" y="6" width="12" height="12"/>
+      </svg></b>
+      <span>柱</span>
+    </button>
+
+    <button data-tool="chimney" title="烟道">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <rect x="4" y="4" width="16" height="16"/>
+        <path d="M4 4L20 20M20 4L4 20"/>
+      </svg></b>
+      <span>烟道</span>
+    </button>
+
+    <button data-tool="drain" title="马桶">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <ellipse cx="12" cy="12" rx="6" ry="8"/>
+      </svg></b>
+      <span>马桶</span>
+    </button>
+
+    <button data-tool="floorDrain" title="地漏">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <circle cx="12" cy="12" r="8"/>
+        <path d="M8 8L16 16M16 8L8 16"/>
+      </svg></b>
+      <span>地漏</span>
+    </button>
+
+    <button data-tool="groundDrain" title="地面下水">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <circle cx="12" cy="12" r="8"/>
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 4v16M4 12h16"/>
+      </svg></b>
+      <span>地面下水</span>
+    </button>
+
+    <button data-tool="sewer" title="立管">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="currentColor">
+        <circle cx="12" cy="12" r="6"/>
+      </svg></b>
+      <span>立管</span>
+    </button>
+
+  </div>
+
+
+  <!-- 其它功能面板 -->
+  <div class="symbol-panel" id="otherPanel">
+
+    <button data-tool="rect" title="创建房间">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="4" y="4" width="16" height="16" rx="1.5"/>
+        <path d="M8 8h8v8H8z"/>
+      </svg></b>
+      <span>房间</span>
+    </button>
+
+    <button data-tool="arc" title="弧墙">
+      <b><svg viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" fill="none">
+        <path d="M4 20Q12 4 20 20"/>
+      </svg></b>
+      <span>弧墙</span>
+    </button>
+
+<button data-tool="octWall" title="八角斜墙">
+  <b>
+    <img
+      alt=""
+      width="22"
+      height="22"
+      style="display:block;"
+     src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzk3NWJiIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTIwIDNMNCA4VjE2TDIwIDIxIi8+PC9zdmc+"
+    >
+  </b>
+  <span>八角斜墙</span>
+</button>
+
+    <button data-tool="measure" title="测量">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 21L21 3M3 21v-4M3 21h4M21 3v4M21 3h-4"/>
+        <path d="M8 16l8-8"/>
+      </svg></b>
+      <span>测量</span>
+    </button>
+
+    <!-- 原修剪功能保留，只修改显示名称 -->
+    <button data-tool="trim" title="清理开放区域墙线">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="6" cy="6" r="2.5"/>
+        <circle cx="6" cy="18" r="2.5"/>
+        <path d="M8 7.5L20 19M8 16.5L20 5M13 12l2-2"/>
+      </svg></b>
+      <span>清理</span>
+    </button>
+
+    <button data-tool="routePlan" title="规划连接路线">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="4" cy="19" r="2"/>
+        <circle cx="20" cy="5" r="2"/>
+        <path d="M6 19h5v-7h5V5h2"/>
+      </svg></b>
+      <span>规划</span>
+    </button>
+
+    <button data-tool="select" title="选择">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 3l7 17 2-7 7-2z"/>
+      </svg></b>
+      <span>选择</span>
+    </button>
+
+    <button id="rooms" title="房间统计">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 19V5M4 19h16"/>
+        <path d="M8 16v-5M12 16V7M16 16v-8"/>
+      </svg></b>
+      <span>统计</span>
+    </button>
+
+    <button data-tool="text" title="文字">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 6h16M12 6v13M8 19h8"/>
+      </svg></b>
+      <span>文字</span>
+    </button>
+    <button id="photoAnnotationTool" title="照片尺寸标注">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3" y="5" width="18" height="14" rx="2"/>
+        <circle cx="9" cy="10" r="2"/>
+        <path d="m21 15-5-5L5 19M13 19l3-3"/>
+      </svg></b>
+      <span>图片标注</span>
+    </button>
+
+  </div>
+
+
+  <!-- 底部常驻工具栏 -->
+  <div class="quick">
+
+    <button data-tool="wall" title="画墙">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 8h18M3 16h18M7 8v8M17 8v8"/>
+      </svg></b>
+      <span>画墙</span>
+    </button>
+
+    <button data-tool="opening" title="创建门洞">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M3 4v16M21 4v16M3 4h6M3 20h6M21 4h-6M21 20h-6"/>
+        <path d="M9 4v16M15 4v16" stroke-dasharray="2 2"/>
+      </svg></b>
+      <span>门洞</span>
+    </button>
+
+    <button data-tool="window" title="窗">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3" y="6" width="18" height="12" rx="1"/>
+        <path d="M3 10h18M12 6v12"/>
+      </svg></b>
+      <span>窗</span>
+    </button>
+
+    <button data-tool="bay" title="飘窗">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M4 6h16v8H4zM7 14v4M17 14v4M7 10h10"/>
+      </svg></b>
+      <span>飘窗</span>
+    </button>
+
+
+
+    <!-- 构件按钮 -->
+    <button id="btnComponentMenu" title="构件">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="4" y="4" width="7" height="7" rx="1"/>
+        <rect x="13" y="4" width="7" height="7" rx="1"/>
+        <rect x="4" y="13" width="7" height="7" rx="1"/>
+        <rect x="13" y="13" width="7" height="7" rx="1"/>
+      </svg></b>
+      <span>构件</span>
+    </button>
+    <!-- 其它按钮 -->
+    <button id="btnOtherMenu" title="其它功能">
+      <b><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M5 6h14M5 12h14M5 18h14"/>
+        <circle cx="3" cy="6" r="1"/>
+        <circle cx="3" cy="12" r="1"/>
+        <circle cx="3" cy="18" r="1"/>
+      </svg></b>
+      <span>其它</span>
+    </button>
+
+  </div>
+</div>
+
+
+<!-- 图片标注页面：页面结构合并在主页面，样式位于 style.css，逻辑位于 photo.js -->
+<div id="photoAnnotationOverlay" class="photo-annotation-overlay" aria-hidden="true">
+<div class="app" id="photoApp">
+<header class="top">
+<div class="brand photo-brand">
+  <div class="photo-brand-title">立诺 · 图片标记</div>
+  <div class="photo-brand-author">立诺装饰 · 15662061321</div>
+</div>
+<div class="top-actions">
+    <button class="iconbtn" id="openGallery" title="照片库"><img alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTllZGY1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3QgeD0iMyIgeT0iNCIgd2lkdGg9IjE4IiBoZWlnaHQ9IjE2IiByeD0iMiIvPjxjaXJjbGUgY3g9IjguNSIgY3k9IjkiIHI9IjEuNSIvPjxwYXRoIGQ9Im0yMSAxNS01LTVMNSAyMCIvPjwvc3ZnPg=="></button>
+    <button class="iconbtn photo-bt-button" id="btConnect" type="button" title="连接蓝牙测距仪" aria-label="蓝牙测距" aria-pressed="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6.5 6.5 17.5 17.5 12 23 12 1 17.5 6.5 6.5 17.5"></polyline></svg></button>
+    <button class="iconbtn" id="settingsBtn" title="设置"><img alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTllZGY1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMyIvPjxwYXRoIGQ9Im0xOS40IDE1IC4xLjEgMS40IDEuMS0xLjQgMi40LTEuNy0uNmE4IDggMCAwIDEtMS43IDFsLS4zIDEuOGgtMi44bC0uMy0xLjhhOCA4IDAgMCAxLTEuNy0xbC0xLjcuNi0xLjQtMi40IDEuNC0xLjFhNyA3IDAgMCAxIDAtMmwtMS40LTEuMSAxLjQtMi40IDEuNy42YTggOCAwIDAgMSAxLjctMWwuMy0xLjhoMi44bC4zIDEuOGE4IDggMCAwIDEgMS43IDFsMS43LS42IDEuNCAyLjQtMS40IDEuMWE3IDcgMCAwIDEgMCAyWiIvPjwvc3ZnPg=="></button>
+    <button type="button" class="iconbtn" id="photoUndo" title="撤销标注" aria-label="撤销标注">↶</button>
+    <button type="button" class="iconbtn" id="photoRedo" title="恢复标注" aria-label="恢复标注">↷</button>
+
+    <button class="iconbtn" id="saveBtn" title="保存"><img alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZTllZGY1IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgM2gxM2w0IDR2MTRIM1YzeiIvPjxwYXRoIGQ9Ik03IDN2NmgxMFYzTTcgMjF2LThoMTB2OCIvPjwvc3ZnPg=="></button>
+  </div>
+</header>
+<div class="subbar">
+  <div class="colors" id="colors"></div>
+<div class="fonts">
+  <span>字号</span>
+    <button class="fontbtn" data-size="1.5">大</button>
+  <button class="fontbtn active" data-size="1.2">中</button>
+  <button class="fontbtn" data-size="0.9">小</button>
+      <button id="returnMeasureBtn" class="return-measure-btn" type="button">返回量房</button>
+</div>
+</div>
+<main class="stage" id="stage">
+  <div class="empty" id="empty"><strong>照片尺寸标注</strong>拍摄现场照片，或从相册选择照片<br>选择「长度」后，在照片上点击两个端点</div>
+  <canvas id="canvas" class="hidden"></canvas>
+  <canvas id="magnifier" width="220" height="220"></canvas>
+  
+  <div class="overlay-hint" id="hint">先拍照或选择照片</div>
+  
+  
+  <div class="gallery" id="gallery">
+    <div class="gallery-head"><button id="closeGallery">✕ 返回编辑</button><b>照片库 / 批量保存</b><button id="selectAll" class="gallery-action-btn">全选</button></div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+    <div class="gallery-actions"><button class="gallery-action-btn" id="deleteSelected">删除所选</button><button class="gallery-action-btn" id="batchSave">批量导出所选照片</button></div>
+  </div>
+</main>
+
+<div class="panel" id="editPanel">
+  <span>标注值</span><input id="valueInput" type="text" inputmode="none" readonly placeholder="使用悬浮数字键盘" style="width:115px">
+  
+  <button id="applyValue" class="primary">应用数值</button>
+  <button id="deleteDim">删除选中</button><button id="clearDims">清空标注</button>
+  <span class="status" id="editStatus">点击照片上的尺寸线可选中并修改</span>
+</div>
+<div class="measurebar">
+  <span class="measure-label">当前尺寸</span>
+  <input id="valueBar" type="text" value="—" readonly>
+</div>
+<nav class="bottom">
+<button class="tool" id="sourceBtn" title="拍照或从相册选择">
+  <svg viewBox="0 0 24 24" width="23" height="23"
+       fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 7h4l2-3h6l2 3h4v13H3z"/>
+    <circle cx="12" cy="13" r="4"/>
+  </svg>
+  图片
+</button>
+<button class="tool" id="centerPanBtn" title="居中并移动照片">
+  <svg viewBox="0 0 24 24" width="23" height="23"
+       fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>
+    <circle cx="12" cy="12" r="5"/>
+  </svg>
+  居中/移动
+</button>
+  <button class="tool" id="drawBtn"><img alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjQ2ZmM4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTTMgMTJoMThNMyA4djhNMjEgOHY4Ii8+PC9zdmc+">长度</button>
+    <button class="tool" id="editBtn" title="删除选中"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v5M14 11v5"/></svg>删除</button>
+    <button class="tool" id="addText" title="文字"><img alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjQ2ZmM4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgNmgxNk0xMiA2djE0TTggMjBoOCIvPjwvc3ZnPg==">文字</button>
+
+</nav>
+<input id="cameraInput" type="file" accept="image/*" capture="environment" class="hidden">
+<input id="albumInput" type="file" accept="image/*" multiple aria-label="选择相册照片" style="position:fixed;left:-10000px;top:0;width:1px;height:1px;opacity:0.01;">
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div class="camera-modal" id="cameraModal">
+ <div class="camera-card">
+  <div class="camera-head"><b>相机设置 · 默认镜头</b><button id="closeCamera">✕</button></div>
+  <video id="cameraVideo" autoplay playsinline></video>
+  <div class="camera-choice-wrap"><span>镜头</span><div id="cameraChoiceButtons" class="camera-choice-buttons" role="group" aria-label="选择摄像头"></div></div>
+  <div class="camera-actions"><button id="switchCamera">切换镜头</button><button id="saveCamera" class="primary">设为默认镜头</button><button id="captureCamera" class="primary">拍照</button></div>
+  <div class="status" id="cameraHelp">在这里选择一次默认镜头（例如超广角），以后点击拍照将直接调用该镜头。手机浏览器未开放的镜头不会显示。</div>
+  <div class="measure-settings-head"><b>图片标记设置</b></div>
+  <div id="annotationSettings" class="annotation-settings">
+    <b>标注外观</b>
+    <label>端点样式
+      <select id="arrowStyle"><option value="tick">小横线</option><option value="arrow">小箭头</option><option value="dot" selected>小圆点</option></select>
+    </label>
+    <label>线型
+      <select id="lineStyle"><option value="solid">实线</option><option value="dashed" selected>虚线</option></select>
+    </label>
+    <label>文字背景
+      <select id="labelStyle"><option value="none">无背景</option><option value="white" selected>白色透明背景</option><option value="blue">蓝色透明背景</option><option value="black">黑色透明背景</option></select>
+    </label>
+    <button type="button" id="confirmAnnotationSettings" class="primary annotation-confirm">保存设置</button>
+  </div>
+  </div>
+</div>
+
+<div id="licenseGate" class="license-gate" hidden></div>
+
+<!-- 程序模块加载 -->
+<script src="base.js" defer></script>
+<script src="scribe.js" defer></script>
+<script src="app.js" defer></script>
+<script src="photo.js" defer></script>
+
+</body>
+</html>
