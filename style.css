@@ -2611,3 +2611,459 @@ body {
 #photoAnnotationOverlay .app {
   position:relative;
 }
+
+/* ===== 从 JS 中拆分的登录/授权及动态界面样式 ===== */
+    body.linuo-login-open{overflow:hidden!important}
+    #linuoLoginGate{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:28px;background:radial-gradient(circle at 15% 20%,rgba(58,142,224,.28),transparent 34%),radial-gradient(circle at 85% 80%,rgba(41,104,175,.34),transparent 35%),linear-gradient(135deg,#0b1830 0%,#102b50 52%,#173e68 100%);color:#172b46;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;overflow:auto}
+    #linuoLoginGate *{box-sizing:border-box}
+    #linuoLoginGate:before{content:"";position:absolute;inset:0;opacity:.12;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.24) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.24) 1px,transparent 1px);background-size:36px 36px;mask-image:linear-gradient(90deg,transparent,#000 22%,#000 85%,transparent)}
+    #linuoLoginGate .lg-shell{position:relative;width:min(390px,100%);min-height:0;display:block;border:1px solid rgba(255,255,255,.24);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 22px 70px rgba(0,0,0,.28)}
+    #linuoLoginGate .lg-intro{display:none}
+    #linuoLoginGate .lg-brand{display:flex;align-items:center;gap:12px;font-weight:700;letter-spacing:.5px}
+    #linuoLoginGate .lg-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.42);border-radius:13px;background:rgba(255,255,255,.12);box-shadow:inset 0 1px rgba(255,255,255,.25)}
+    #linuoLoginGate .lg-mark svg{width:25px;height:25px}
+    #linuoLoginGate .lg-brand small{display:block;margin-top:3px;color:rgba(255,255,255,.68);font-size:10px;font-weight:500;letter-spacing:1.6px}
+    #linuoLoginGate .lg-copy{position:relative;z-index:1;margin:50px 0 34px}
+    #linuoLoginGate .lg-kicker{margin:0 0 16px;color:#8fc7ff;font-size:11px;font-weight:700;letter-spacing:2.6px}
+    #linuoLoginGate .lg-copy h1{margin:0;color:#fff;font-size:clamp(30px,4vw,46px);font-weight:750;line-height:1.28;letter-spacing:1px}
+    #linuoLoginGate .lg-copy h1 span{color:#8fc7ff}
+    #linuoLoginGate .lg-copy p{max-width:390px;margin:18px 0 0;color:rgba(255,255,255,.72);font-size:14px;line-height:1.9}
+    #linuoLoginGate .lg-tags{display:flex;flex-wrap:wrap;gap:9px;margin-top:26px}
+    #linuoLoginGate .lg-tags span{padding:8px 12px;border:1px solid rgba(255,255,255,.2);border-radius:20px;background:rgba(255,255,255,.08);color:#e3f1ff;font-size:12px}
+    #linuoLoginGate .lg-blueprint{position:absolute;right:-2px;bottom:24px;width:270px;height:190px;opacity:.2;pointer-events:none}
+    #linuoLoginGate .lg-foot{color:rgba(255,255,255,.52);font-size:11px;letter-spacing:.5px}
+    #linuoLoginGate .lg-panel{display:flex;align-items:center;justify-content:center;padding:30px 25px;background:#fff}
+    #linuoLoginGate .lg-card{width:100%;max-width:360px}
+    #linuoLoginGate .lg-welcome{margin:0 0 9px;color:#397fc5;font-size:10px;font-weight:800;letter-spacing:2.2px}
+    #linuoLoginGate .lg-card h2{margin:0;color:#172c49;font-size:27px;font-weight:750;letter-spacing:.5px}
+    #linuoLoginGate .lg-desc{margin:10px 0 29px;color:#8290a3;font-size:13px;line-height:1.7}
+    #linuoLoginGate .lg-label{display:block;margin-bottom:9px;color:#354b66;font-size:13px;font-weight:650}
+    #linuoLoginGate .lg-input-wrap{position:relative}
+    #linuoLoginGate .lg-input-wrap svg{position:absolute;left:15px;top:50%;width:18px;height:18px;transform:translateY(-50%);color:#8b9bb0;pointer-events:none}
+    #linuoLoginGate input{width:100%;height:52px;padding:0 15px 0 44px;border:1px solid #dce5ef;border-radius:12px;outline:none;background:#fff;color:#1d3553;font-size:15px;transition:border-color .18s,box-shadow .18s}
+    #linuoLoginGate input:focus{border-color:#438bd1;box-shadow:0 0 0 4px rgba(55,132,207,.12)}
+    #linuoLoginGate input::placeholder{color:#aab6c5}
+    #linuoLoginGate .lg-submit{width:100%;height:52px;margin-top:20px;border:0;border-radius:12px;background:linear-gradient(110deg,#2877c8,#3d96e5);box-shadow:0 8px 18px rgba(43,120,197,.22);color:#fff;font-size:15px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:transform .15s,filter .15s}
+    #linuoLoginGate .lg-submit:hover{filter:brightness(1.05);transform:translateY(-1px)}
+    #linuoLoginGate .lg-submit:disabled{opacity:.65;cursor:wait;transform:none}
+    #linuoLoginGate .lg-status{min-height:24px;margin-top:13px;color:#718197;font-size:12px;line-height:1.6;text-align:center}
+    #linuoLoginGate .lg-status.error{color:#d44b54}
+    #linuoLoginGate .lg-status.success{color:#19845a}
+    #linuoLoginGate .lg-note{margin-top:25px;padding:12px 13px;border:1px solid #e4ebf3;border-radius:10px;background:#f4f7fb;color:#8997a8;font-size:11px;line-height:1.7;text-align:center}
+    #linuoLoginGate .lg-copyline{margin-top:24px;color:#a0adbd;font-size:11px;text-align:center}
+    #linuoLoginGate.lg-leaving{opacity:0;transform:scale(1.015);transition:opacity .24s,transform .24s;pointer-events:none}
+    @media(max-width:760px){#linuoLoginGate{padding:18px}#linuoLoginGate .lg-shell{width:min(390px,100%);min-height:0;display:block;border-radius:18px}#linuoLoginGate .lg-panel{padding:28px 22px}#linuoLoginGate .lg-desc{margin-bottom:20px}#linuoLoginGate .lg-card h2{font-size:23px}}
+    @media(max-height:650px) and (min-width:761px){#linuoLoginGate{padding:12px}#linuoLoginGate .lg-shell{min-height:500px}#linuoLoginGate .lg-intro{padding:28px 36px}#linuoLoginGate .lg-panel{padding:25px}}
+	    /* =========================================
+       立诺登录界面新版排版
+       电脑端左右分栏，手机端上下布局
+    ========================================= */
+
+    #linuoLoginGate .lg-shell{
+      width:min(820px,100%);
+      min-height:500px;
+      display:grid;
+      grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);
+    }
+
+    /* 左侧软件介绍区域 */
+    #linuoLoginGate .lg-intro{
+      display:flex;
+      position:relative;
+      flex-direction:column;
+      justify-content:space-between;
+      min-width:0;
+      padding:38px 34px;
+      overflow:hidden;
+      background:linear-gradient(145deg,#102b4b 0%,#1c5684 100%);
+    }
+
+    #linuoLoginGate .lg-brand{
+      position:relative;
+      z-index:1;
+    }
+
+    #linuoLoginGate .lg-copy{
+      margin:34px 0 24px;
+    }
+
+    #linuoLoginGate .lg-copy h1{
+      font-size:clamp(28px,3.2vw,40px);
+    }
+
+    #linuoLoginGate .lg-foot{
+      position:relative;
+      z-index:1;
+    }
+
+    #linuoLoginGate .lg-blueprint{
+      right:-8px;
+      bottom:16px;
+      width:220px;
+      height:auto;
+      opacity:.16;
+    }
+
+    /* 右侧登录区域 */
+    #linuoLoginGate .lg-panel{
+      padding:42px 44px;
+    }
+
+    #linuoLoginGate .lg-card{
+      max-width:340px;
+    }
+
+    #linuoLoginGate .lg-card h2{
+      margin:0 0 25px;
+      font-size:26px;
+    }
+
+    #linuoLoginGate .lg-label{
+      margin-bottom:8px;
+    }
+
+    #linuoLoginGate .lg-note{
+      margin-top:24px;
+    }
+
+    /* 手机端布局 */
+    @media(max-width:760px){
+
+      #linuoLoginGate{
+        padding:14px;
+      }
+
+      #linuoLoginGate .lg-shell{
+        width:min(460px,100%);
+        min-height:0;
+        display:grid;
+        grid-template-columns:1fr;
+        border-radius:18px;
+      }
+
+      #linuoLoginGate .lg-intro{
+        padding:20px 22px 18px;
+        min-height:0;
+      }
+
+      #linuoLoginGate .lg-mark{
+        width:38px;
+        height:38px;
+      }
+
+      #linuoLoginGate .lg-copy{
+        margin:16px 0 0;
+      }
+
+      #linuoLoginGate .lg-kicker{
+        margin:0 0 8px;
+        font-size:9px;
+        letter-spacing:1.6px;
+      }
+
+      #linuoLoginGate .lg-copy h1{
+        font-size:24px;
+        line-height:1.2;
+      }
+
+      #linuoLoginGate .lg-copy p{
+        display:none;
+      }
+
+      #linuoLoginGate .lg-tags{
+        margin-top:12px;
+        gap:6px;
+      }
+
+      #linuoLoginGate .lg-tags span{
+        padding:6px 9px;
+        font-size:10px;
+      }
+
+      #linuoLoginGate .lg-blueprint{
+        right:-6px;
+        bottom:-4px;
+        width:150px;
+        opacity:.1;
+      }
+
+      #linuoLoginGate .lg-foot{
+        display:none;
+      }
+
+      #linuoLoginGate .lg-panel{
+        padding:25px 22px 27px;
+      }
+
+      #linuoLoginGate .lg-card h2{
+        font-size:23px;
+        margin-bottom:18px;
+      }
+
+      #linuoLoginGate .lg-input-wrap input{
+        height:48px;
+      }
+
+      #linuoLoginGate .lg-submit{
+        height:48px;
+        margin-top:17px;
+      }
+
+      #linuoLoginGate .lg-note{
+        margin-top:18px;
+        padding:10px;
+      }
+    }
+
+    /* 电脑小屏幕高度适配 */
+    @media(max-height:700px) and (min-width:761px){
+
+      #linuoLoginGate{
+        padding:10px;
+      }
+
+      #linuoLoginGate .lg-shell{
+        min-height:460px;
+      }
+
+      #linuoLoginGate .lg-intro{
+        padding-top:28px;
+        padding-bottom:28px;
+      }
+
+      #linuoLoginGate .lg-panel{
+        padding-top:24px;
+        padding-bottom:24px;
+      }
+    }
+    /* 简洁登录版：单卡片布局，减少装饰与信息干扰 */
+    #linuoLoginGate{padding:18px;background:linear-gradient(145deg,#edf3fa,#dfe8f3);color:#20334c}
+    #linuoLoginGate:before{display:none}
+    #linuoLoginGate .lg-shell{width:min(390px,100%);min-height:0;display:block;border:1px solid #e2e9f1;border-radius:18px;box-shadow:0 18px 50px rgba(31,55,85,.16)}
+    #linuoLoginGate .lg-intro{display:none}
+    #linuoLoginGate .lg-panel{padding:30px 26px;background:#fff}
+    #linuoLoginGate .lg-card{max-width:none}
+    #linuoLoginGate .lg-welcome{font-size:11px;letter-spacing:1.4px}
+    #linuoLoginGate .lg-card h2{font-size:25px;margin:0 0 10px}
+    #linuoLoginGate .lg-desc{margin:0 0 23px;color:#8290a3}
+    #linuoLoginGate .lg-note{margin-top:18px}
+    #linuoLoginGate .lg-copyline{margin-top:16px}
+    @media(max-width:760px){#linuoLoginGate .lg-shell{width:min(390px,100%);display:block}#linuoLoginGate .lg-panel{padding:27px 22px}}
+    /* 本轮微调：标题与输入区拉开距离，联系方式保持紧凑 */
+    #linuoLoginGate .lg-card h2{margin:0 0 22px!important}
+    #linuoLoginGate .lg-desc{margin:0 0 24px!important}
+    #linuoLoginGate .lg-note{margin-top:10px!important;padding:7px 10px!important;font-size:10px!important;line-height:1.45!important}
+    #linuoLoginGate .lg-copyline{margin-top:8px!important}
+    #linuoLoginGate .lg-status{margin-top:9px!important;min-height:20px!important}
+  
+#linuoLoginGate .lg-password-label{margin-top:15px}
+.license-card{position:relative}
+.license-close-btn{position:absolute;right:10px;top:8px;width:30px;height:30px;padding:0!important;margin:0!important;border:0!important;border-radius:8px!important;background:#edf2f8!important;color:#34445d!important;font-size:22px;line-height:1;cursor:pointer}
+.license-close-btn[hidden]{display:none!important}
+.license-machine-label{font-size:12px}
+.license-error{color:#dc2626}
+.license-error.success{color:#15803d}
+.photo-source-mask{position:fixed;inset:0;z-index:100000;display:flex;align-items:flex-end;justify-content:center;padding:16px;background:rgba(15,23,42,.28)}
+.photo-source-card{width:min(420px,100%);padding:16px;background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.18);display:grid;gap:10px}
+.photo-source-title{font-size:15px;font-weight:700;text-align:center;padding:4px}
+.photo-source-card button{width:100%;margin:0}
+.photo-source-camera{height:46px;border:0;border-radius:10px;background:#1677e8;color:#fff;font-size:15px}
+.photo-source-album{height:46px;border:1px solid #dce5f0;border-radius:10px;background:#f5f8fc;color:#26384e;font-size:15px}
+.photo-source-cancel{height:40px;border:0;border-radius:10px;background:#eef2f7;color:#526174;font-size:14px}
+.snap-lens{position:absolute;top:56px;right:10px;z-index:20;display:none;pointer-events:none}
+.snap-lens-canvas{display:block;border-radius:12px;box-shadow:0 4px 16px rgba(31,55,85,.25);border:2px solid rgba(255,255,255,.9);background:#f3f6fb}
+.snap-lens-label{margin-top:6px;text-align:center;font-size:11px;color:#fff;background:rgba(32,45,69,.9);padding:4px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.measure-float{position:absolute;right:12px;top:12px;z-index:5;padding:7px 12px;border-radius:9px;background:rgba(255,255,255,.96);box-shadow:0 2px 12px rgba(0,0,0,.18);color:#e53935;font-size:18px;font-weight:800;pointer-events:none}
+.bt-fields-details{margin-top:10px;border:1px solid #dce5f0;border-radius:11px;background:#f6f8fc;padding:0 10px}
+.bt-fields-summary{cursor:pointer;padding:10px 0;font-size:13px;font-weight:600;color:#34445d;list-style:none}
+.settings-author{display:flex;align-items:center;justify-content:flex-start;gap:12px;flex-wrap:wrap;margin:0 0 10px;padding:0 0 8px;border-bottom:1px solid #e4eaf2;text-align:left;color:#64748b;font-size:12px;line-height:1.6}
+.settings-account-status{color:#1677e8;font-weight:600}
+.settings-activate{margin-left:auto;padding:4px 9px;border:1px solid #d3dae4;border-radius:7px;background:#eef2f7;color:#34445d;font-size:11px}
+.custom-toast{position:fixed;top:15%;left:50%;transform:translateX(-50%);background:rgba(32,45,69,.92);color:#fff;padding:12px 16px;border-radius:10px;font-size:13px;z-index:9999;max-width:80%;text-align:left;line-height:1.6;box-shadow:0 4px 12px rgba(0,0,0,.2);transition:opacity .2s;pointer-events:none}
+.legend-ghost{position:fixed;z-index:100000;pointer-events:none;padding:8px 12px;border-radius:12px;background:rgba(31,111,210,.9);color:#fff;font-size:13px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.2);transform:translate(-50%,-130%);white-space:nowrap}
+.panel-rotate-button,.panel-direction-button{flex:0 0 auto;margin:0 4px;height:28px;padding:0 10px;border-radius:8px;background:#edf5ff;color:#1677e8;border:1px solid #dcecff;font-size:12px;font-weight:700;white-space:nowrap}
+.panel-rotate-button{letter-spacing:.5px}
+.settings-title-actions{display:flex;gap:6px;margin-left:auto;margin-right:8px;flex-shrink:0}
+.settings-icon-button{width:26px;min-width:26px;padding:4px 0;font-size:15px;border-radius:6px;background:#edf2f8;color:#34445d;font-weight:700}
+.settings-open-button{padding:4px 8px;font-size:11px;border-radius:6px;background:#edf2f8;color:#34445d;font-weight:normal}
+.settings-cloud-button{padding:4px 3px;font-size:10px;border-radius:6px;font-weight:600;color:#fff;border:0}
+.settings-cloud-restore{background:#2878d0!important}
+.settings-cloud-backup{background:#159765!important}
+.wall-length-input{width:80px;height:30px;min-height:30px;padding:0 6px;font-size:14px;font-weight:bold;text-align:center;border-radius:6px;border:2px solid #1677e8!important;background:#fff;margin:0 6px;color:#e53935;-webkit-text-fill-color:#e53935;outline:none;box-shadow:none;box-sizing:border-box}
+.wall-length-title-wrap{display:flex;align-items:center;justify-content:center;width:100%}
+.wall-length-unit-label{font-size:14px;color:#20344f}
+.wall-length-label{margin-right:6px;font-size:14px;color:#20344f}
+.shared-numeric-proxy{position:fixed;left:-10000px;top:-10000px;width:1px;height:1px;opacity:0;pointer-events:none}
+
+.camera-settings-fold{width:100%;margin:6px 0;padding:8px;border:1px solid #d7e2ef;border-radius:8px;background:#f4f8fc;color:#245b9b;font-size:13px}
+
+/* 常用参数面板模板样式 */
+.visually-hidden-input{display:none}
+.wall-end-toggle{width:100%;height:34px;min-height:0;padding:0 6px;font-size:13px;font-weight:700;letter-spacing:.5px;border-radius:7px}
+.wall-editor-end-field-wide{grid-column:span 3}
+.text-edit-content{grid-column:span 2}
+.text-edit-select{height:34px;padding:0 5px;font-size:12px;appearance:auto;-webkit-appearance:auto}
+.empty-room-stats{padding:10px 0;color:#637083}
+.route-panel-hint{margin:0 0 10px}
+.route-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;width:100%}
+.route-choices button{min-width:0;padding:8px 3px;font-size:12px;white-space:normal}
+.arc-flip-button{color:var(--blue);font-size:12px}
+.measure-start-notice{padding:8px 2px;text-align:center}
+.measure-start-headline{font-size:16px;font-weight:700;color:#24364b}
+.measure-start-detail{font-size:13px;color:#718096;line-height:1.8;margin-top:8px}
+.measure-start-actions{display:flex;gap:10px;margin-top:18px}
+.measure-start-actions button{flex:1}
+.settings-unit-select{text-align:center;color:#7a8798;padding:0 5px;height:34px}
+.settings-uuid-grid{grid-template-columns:1fr}
+.settings-actions{flex-wrap:wrap;flex-direction:row;gap:8px}
+.settings-actions button{flex:1}
+.settings-save-button{background:#edf2f8;color:#34445d}
+.settings-dxf-button{background:var(--blue);color:#fff}
+
+/* 房间统计与已保存图纸列表 */
+.room-stats-count{font-size:13px;color:#637083;margin-bottom:8px}
+.room-stats-table-wrap{max-height:50vh;overflow-y:auto;margin-bottom:12px}
+.room-stats-table{width:100%;border-collapse:collapse;font-size:12px;text-align:center}
+.room-stats-head{border-bottom:1px solid #dce5f0;color:#78879b;font-weight:600}
+.room-stats-name-head{padding:8px 0;text-align:left}
+.room-stats-row{border-bottom:1px solid #f1f5f9}
+.room-stats-name-cell{padding:10px 0;text-align:left}
+.room-name-edit{display:inline-block;min-width:50px;padding:4px 8px;border-radius:6px;background:#eef5fc;color:#1e293b;font-weight:700;cursor:pointer;user-select:none}
+.room-stats-area{color:#1677e8;font-weight:600}
+.room-stats-perimeter{color:#0ea5e9;font-weight:600}
+.room-stats-total{display:flex;justify-content:space-between;padding:12px;background:#f4f8fc;border-radius:8px;border:1px solid #e2eaf4;font-size:13px;font-weight:700;color:#0f172a;margin-bottom:8px}
+.room-stats-total .room-stats-area{color:#1677e8}
+.room-stats-total .room-stats-perimeter{color:#0ea5e9}
+.saved-project-list{max-height:60vh;overflow:auto}
+.saved-project-row{display:flex;align-items:center;gap:8px;padding:10px 8px;border-bottom:1px solid #e7edf5;position:relative}
+.saved-project-main{flex:1;min-width:0}
+.saved-project-name{font-weight:700;color:#26364d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saved-project-date{font-size:11px;color:#8290a3;margin-top:3px}
+.saved-project-open{min-width:52px;padding:5px 10px;height:30px;font-size:12px}
+.saved-project-empty{padding:18px;text-align:center}
+.opening-direction-button{flex:0 0 auto;margin:0 4px;height:28px;padding:0 10px;border-radius:8px;background:#1677e8;color:#fff;border:1px solid #1677e8;font-size:12px;font-weight:700;white-space:nowrap}
+.offscreen-download-link{position:fixed;left:-9999px;top:0;opacity:0;pointer-events:none}
+.actions-hidden,.hidden-panel-submit{display:none!important}
+.door-params-grid-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.component-size-select{height:32px;padding:0 4px;font-size:12px}
+
+/* 新建图纸面板与图标模板 */
+#uiSideToggle.is-right-hand svg{transform:scaleX(-1)}
+.hand-icon-mirrored{transform:scaleX(-1)}
+.new-project-hand-field{grid-column:1/-1}
+.new-project-hand-options{display:flex;gap:10px}
+.new-project-hand-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:7px;height:38px;border:1px solid #d9e1eb;border-radius:8px;background:#fff;color:#536177;font-weight:700}
+.new-project-hand-btn.active{border-color:#1677e8;background:#edf5ff;color:#1677e8}
+.new-project-start-room{display:flex;justify-content:flex-end;margin-top:10px}
+.new-project-start-room button{height:32px;padding:0 12px;border:1px solid #1677e8;border-radius:8px;background:#edf5ff;color:#1677e8;font-weight:700}
+.new-project-room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+
+
+/* 数字键盘固定按键状态样式；按键结构位于 index.html 模板 */
+.num-kb-voice{touch-action:none}
+.num-kb-delete{width:100%}
+.num-kb-confirm{color:#2878df;font-weight:bold;height:100%}
+.num-kb-toggle{color:#2878df;font-weight:bold}
+
+/* 图片标记：绘图工具弹出选项与图形线型设置 */
+#photoAnnotationOverlay nav.bottom{position:relative;}
+#photoAnnotationOverlay .graphic-picker{
+  position:absolute;right:6px;bottom:calc(100% + 9px);z-index:80;
+  display:flex;gap:7px;padding:8px;background:rgba(255,255,255,.98);
+  border:1px solid #dce5f0;border-radius:13px;
+  box-shadow:0 8px 26px rgba(25,48,78,.18);backdrop-filter:blur(12px);
+}
+#photoAnnotationOverlay .graphic-picker.hidden{display:none!important;}
+#photoAnnotationOverlay .graphic-picker button{
+  min-width:76px;height:66px;padding:7px 9px;border:1px solid #e3eaf3;
+  border-radius:10px;background:#f7faff;color:#315779;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  font-size:12px;font-weight:600;white-space:nowrap;
+}
+#photoAnnotationOverlay .graphic-picker button:active{background:#eaf3ff;border-color:#8bb9ec;}
+#photoAnnotationOverlay .graphic-option-icon{font-size:25px;line-height:27px;color:#1677e8;font-weight:500;}
+#photoAnnotationOverlay .camera-card>.annotation-settings select#graphicLineStyle{width:58%;}
+#photoAnnotationOverlay nav.bottom #graphicBtn svg{stroke:currentColor;}
+@media(max-width:380px){
+  #photoAnnotationOverlay .graphic-picker{right:3px;gap:4px;padding:6px;}
+  #photoAnnotationOverlay .graphic-picker button{min-width:66px;height:60px;padding:5px;font-size:11px;}
+}
+
+/* 图片标记：图片、居中移动菜单统一样式 */
+
+#photoAnnotationOverlay #sourcePicker,
+#photoAnnotationOverlay #centerPanPicker,
+#photoAnnotationOverlay #graphicPicker {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  z-index: 100;
+  display: flex;
+  gap: 7px;
+  padding: 8px;
+  background: rgba(255,255,255,.98);
+  border: 1px solid #dce5f0;
+  border-radius: 13px;
+  box-shadow: 0 8px 26px rgba(25,48,78,.18);
+  backdrop-filter: blur(12px);
+}
+
+#photoAnnotationOverlay #sourcePicker {
+  left: 5px;
+  right: auto;
+}
+
+#photoAnnotationOverlay #centerPanPicker {
+  left: 12%;
+  right: auto;
+}
+
+#photoAnnotationOverlay #sourcePicker button,
+#photoAnnotationOverlay #centerPanPicker button {
+  min-width: 76px;
+  height: 66px;
+  padding: 7px 9px;
+  border: 1px solid #e3eaf3;
+  border-radius: 10px;
+  background: #f7faff;
+  color: #315779;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#photoAnnotationOverlay #sourcePicker button:active,
+#photoAnnotationOverlay #centerPanPicker button:active {
+  background: #eaf3ff;
+  border-color: #8bb9ec;
+}
+
+#photoAnnotationOverlay .graphic-picker.hidden {
+  display: none !important;
+}
+
+@media(max-width:380px) {
+  #photoAnnotationOverlay #sourcePicker,
+  #photoAnnotationOverlay #centerPanPicker,
+  #photoAnnotationOverlay #graphicPicker {
+    gap: 4px;
+    padding: 6px;
+  }
+
+  #photoAnnotationOverlay #sourcePicker button,
+  #photoAnnotationOverlay #centerPanPicker button {
+    min-width: 66px;
+    height: 60px;
+    padding: 5px;
+    font-size: 11px;
+  }
+
+  #photoAnnotationOverlay #centerPanPicker {
+    left: 12%;
+  }
+}
+

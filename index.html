@@ -369,6 +369,19 @@ aria-label="当前左手操作，点击切换到右手">左手</button>
   </svg>
   图片
 </button>
+
+<!-- 图片来源弹出菜单 -->
+<div class="graphic-picker hidden" id="sourcePicker" role="group" aria-label="图片来源">
+  <button type="button" data-source="camera">
+    <span class="graphic-option-icon">◎</span>
+    <span>拍照</span>
+  </button>
+  <button type="button" data-source="album">
+    <span class="graphic-option-icon">▧</span>
+    <span>相册</span>
+  </button>
+</div>
+
 <button class="tool" id="centerPanBtn" title="居中并移动照片">
   <svg viewBox="0 0 24 24" width="23" height="23"
        fill="none" stroke="currentColor" stroke-width="2"
@@ -378,9 +391,31 @@ aria-label="当前左手操作，点击切换到右手">左手</button>
   </svg>
   居中/移动
 </button>
+
+<!-- 居中/移动弹出菜单 -->
+<div class="graphic-picker hidden" id="centerPanPicker" role="group" aria-label="照片位置工具">
+  <button type="button" data-view="center">
+    <span class="graphic-option-icon">⊙</span>
+    <span>居中</span>
+  </button>
+  <button type="button" data-view="pan">
+    <span class="graphic-option-icon">✥</span>
+    <span>移动/缩放</span>
+  </button>
+</div>
+
   <button class="tool" id="drawBtn"><img alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjQ2ZmM4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+PHBhdGggZD0iTTMgMTJoMThNMyA4djhNMjEgOHY4Ii8+PC9zdmc+">长度</button>
     <button class="tool" id="editBtn" title="删除选中"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/><path d="M10 11v5M14 11v5"/></svg>删除</button>
     <button class="tool" id="addText" title="文字"><img alt="" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjQ2ZmM4IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHBhdGggZD0iTTQgNmgxNk0xMiA2djE0TTggMjBoOCIvPjwvc3ZnPg==">文字</button>
+    <button class="tool" id="graphicBtn" title="绘制直线、圆形或矩形" type="button">
+      <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19 19 4M4 4h6M14 20h6M4 4v6M20 14v6"/><circle cx="18" cy="6" r="2"/></svg>
+      绘图
+    </button>
+    <div class="graphic-picker hidden" id="graphicPicker" role="group" aria-label="选择绘图工具">
+      <button type="button" data-graphic="line"><span class="graphic-option-icon">／</span><span>画直线</span></button>
+      <button type="button" data-graphic="circle"><span class="graphic-option-icon">○</span><span>画圆形</span></button>
+      <button type="button" data-graphic="rect"><span class="graphic-option-icon">□</span><span>画矩形</span></button>
+    </div>
 
 </nav>
 <input id="cameraInput" type="file" accept="image/*" capture="environment" class="hidden">
@@ -399,18 +434,356 @@ aria-label="当前左手操作，点击切换到右手">左手</button>
     <label>端点样式
       <select id="arrowStyle"><option value="tick">小横线</option><option value="arrow">小箭头</option><option value="dot" selected>小圆点</option></select>
     </label>
-    <label>线型
+    <label>标注线型
       <select id="lineStyle"><option value="solid">实线</option><option value="dashed" selected>虚线</option></select>
     </label>
     <label>文字背景
       <select id="labelStyle"><option value="none">无背景</option><option value="white" selected>白色透明背景</option><option value="blue">蓝色透明背景</option><option value="black">黑色透明背景</option></select>
+    </label>
+    <label>图形线型
+      <select id="graphicLineStyle">
+        <option value="thick-solid">粗实线</option>
+        <option value="thick-dashed">粗虚线</option>
+        <option value="thin-solid">细实线</option>
+        <option value="thin-dashed">细虚线</option>
+      </select>
     </label>
     <button type="button" id="confirmAnnotationSettings" class="primary annotation-confirm">保存设置</button>
   </div>
   </div>
 </div>
 
-<div id="licenseGate" class="license-gate" hidden></div>
+<!-- 固定界面模板：结构放在 HTML，交互与动态数据仍由 JS 处理 -->
+<template id="linuoLoginGateTemplate">
+  <section id="linuoLoginGate" role="dialog" aria-modal="true" aria-labelledby="linuoLoginTitle">
+
+    <div class="lg-shell">
+      <section class="lg-intro">
+        <div class="lg-brand">
+          <div class="lg-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V4h18v16H3Z"/><path d="M3 12h7v8M10 4v5h6V4M16 9v5h5M10 14h6v6"/><path d="M6 7h1M6 16h1"/></svg></div>
+          <div>立诺装饰设计<small>LINUO · SMART MEASURE</small></div>
+        </div>
+        <div class="lg-copy">
+          <p class="lg-kicker">PROFESSIONAL FIELD TOOL</p>
+          <h1>让每一次量房<br><span>更精准、更高效</span></h1>
+          <p>从现场测量到户型绘制，再到照片尺寸标记，让测量记录与设计工作自然衔接。</p>
+          <div class="lg-tags"><span>户型绘制</span><span>尺寸标注</span><span>图片标记</span><span>数据管理</span></div>
+        </div>
+        <svg class="lg-blueprint" viewBox="0 0 270 190" fill="none" stroke="white" stroke-width="1.5"><path d="M8 8h110v72H8zM118 8h92v48h-92zM210 8h52v122h-52zM8 80h65v95H8zM73 80h85v48H73zM158 56h52v119h-52zM73 128h85v47H73zM118 8v28h-30M210 56h-28v24M158 128h32M40 80V55h30M8 36h18M230 130v24h-20"/><path d="M29 8v72M73 104h85M118 36h40M210 80h52" stroke-dasharray="4 5"/></svg>
+        <div class="lg-foot">让量房更简单 · 让设计更高效</div>
+      </section>
+      <section class="lg-panel">
+        <div class="lg-card">
+          
+          <h2 id="linuoLoginTitle">立诺量房工具</h2>
+          
+          <form id="linuoLoginForm" autocomplete="on">
+            <label class="lg-label" for="linuoLoginAccount">登录账号</label>
+            <div class="lg-input-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+              <input id="linuoLoginAccount" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="请输入账号" maxlength="80" required>
+            </div>
+            <label class="lg-label lg-password-label" for="linuoLoginPassword">登录密码</label>
+            <div class="lg-input-wrap">
+              <input id="linuoLoginPassword" name="password" type="password" autocomplete="current-password" placeholder="请输入密码" maxlength="120" required>
+            </div>
+            <button class="lg-submit" id="linuoLoginSubmit" type="submit">登录</button>
+            <div class="lg-status" id="linuoLoginStatus" role="status" aria-live="polite">等待输入账号和密码</div>
+          </form>
+          <div class="lg-note">联系方式：15662061321</div>
+        </div>
+      </section>
+    </div>
+  </section>
+</template>
+
+
+
+<template id="photoGalleryItemTemplate">
+  <div class="thumb">
+    <img alt="">
+    <input type="checkbox" class="photo-select" checked>
+    <small></small>
+    <button type="button" class="photo-delete-btn">删除</button>
+  </div>
+</template>
+<template id="cameraChoiceButtonTemplate">
+  <button type="button" class="camera-choice-btn"></button>
+</template>
+<template id="cameraSettingsFoldTemplate">
+  <button type="button" id="cameraSettingsFold" class="camera-settings-fold">摄像头设置（展开）</button>
+</template>
+<template id="photoSourcePickerTemplate">
+  <div id="photoSourcePicker" class="photo-source-mask">
+    <div class="photo-source-card">
+      <div class="photo-source-title">选择图片来源</div>
+      <button id="photoSourceCamera" class="photo-source-camera">拍照</button>
+      <button id="photoSourceAlbum" class="photo-source-album">从相册选择</button>
+      <button id="photoSourceCancel" class="photo-source-cancel">取消</button>
+    </div>
+  </div>
+</template>
+
+<template id="linuoDialogShowTemplate">
+  <div id="linuoDialogMask" class="linuo-dialog-mask">
+    <div class="linuo-dialog-card">
+      <div class="linuo-dialog-title" data-dialog-title></div>
+      <div class="linuo-dialog-message" data-dialog-message></div>
+      <div class="linuo-dialog-actions" data-dialog-actions></div>
+    </div>
+  </div>
+</template>
+
+<template id="linuoDialogInputTemplate">
+  <div id="linuoDialogMask" class="linuo-dialog-mask">
+    <div class="linuo-dialog-card">
+      <div class="linuo-dialog-title" data-dialog-title></div>
+      <input class="linuo-dialog-input" data-dialog-input>
+      <div class="linuo-dialog-actions" data-dialog-actions></div>
+    </div>
+  </div>
+</template>
+
+
+<!-- 常用参数面板模板 -->
+<template id="componentCreatePanelTemplate">
+  <div class="grid5">
+    <div class="f"><label>宽度</label><input id="iw" type="number"></div>
+    <div class="f"><label>高度</label><input id="iheight" type="number"></div>
+    <div class="f" data-field-thick><label>墙厚</label><input id="ithick" type="number"></div>
+    <div class="f" data-field-sill><label>距地</label><input id="isill" type="number"></div>
+    <div class="f" data-field-depth><label>深度</label><input id="idepth" type="number"></div>
+    <div class="f"><label>距边</label><input id="iedge" type="number"></div>
+  </div>
+  <div class="actions actions-hidden"><button class="primary" id="place">确定</button></div>
+  <div class="hint" data-component-hint></div>
+</template>
+<template id="componentEditPanelTemplate">
+  <div class="grid5">
+    <div class="f"><label>宽度</label><input id="eiw" type="number"></div>
+    <div class="f"><label>高度</label><input id="eih" type="number"></div>
+    <div class="f" data-field-thick><label>墙厚</label><input id="eithick" type="number"></div>
+    <div class="f" data-field-sill><label>距地</label><input id="eisill" type="number"></div>
+    <div class="f" data-field-depth><label>深度</label><input id="eidepth" type="number"></div>
+    <div class="f"><label>距边</label><input id="eiedge" type="number"></div>
+  </div>
+  <div class="actions"><button class="primary" id="saveItem">保存修改</button><button class="danger" id="delItem">删除构件</button></div>
+  <div class="hint">修改参数将同步更新画布、门洞连接线与尺寸记忆。</div>
+</template>
+<template id="entryDoorPanelTemplate">
+  <div class="grid4 door-params-grid-two">
+    <div class="f"><label>门宽</label><input id="entryWidth" type="number" min="100"></div>
+    <div class="f"><label>门高</label><input id="entryDoorHeight" type="number" min="100"></div>
+  </div>
+  <button class="primary hidden-panel-submit" id="saveEntryDoor">保存参数</button>
+  <div class="hint">修改门宽以门洞中心为基准；输入完成后按数字键盘 ✓ 保存。墙厚沿用原有设置，不在此处修改。</div>
+</template>
+<template id="pointItemEditorPanelTemplate">
+  <div class="grid5">
+    <div class="f"><label>名称</label><input id="dn"></div>
+    <div class="f" data-point-length><label>长度</label><input id="dlen" type="number"></div>
+    <div class="f" data-point-width><label>宽度</label><input id="dwid" type="number"></div>
+    <div class="f" data-point-diameter><label>管径</label><select id="ddia" class="component-size-select"><option value="50">50</option><option value="75">75</option><option value="110">110</option><option value="160">160</option><option value="200">200</option></select></div>
+    <div class="f"><label>上下净距</label><input id="dleft" type="number" min="0" step="1" value="0"></div>
+    <div class="f"><label>左右净距</label><input id="dtop" type="number" min="0" step="1" value="0"></div>
+  </div>
+  <div class="actions"><button class="primary" id="dsave">完成编辑</button></div>
+  <div class="hint">边距实时显示构件最外侧边缘到上下、左右两个方向最近墙线的垂直净距；测量结果不改变构件位置。</div>
+</template>
+<template id="openingDirectionButtonTemplate"><button type="button" class="opening-direction-button"></button></template>
+<template id="wallLengthPanelTemplate">
+  <div class="visually-hidden-input"><input id="len" type="number" inputmode="decimal"></div>
+  <div class="actions"><button class="primary" id="nextWall">确定并继续画墙</button></div>
+  <div class="hint">此处输入的终点不会自动吸附端点；拖拽时靠近端点松开会询问是否连接。闭合轮廓后可继续添加门窗。</div>
+</template>
+<template id="roomCreatePanelTemplate">
+  <div class="grid4">
+    <div class="f"><label>长度</label><input id="rlen" type="number"></div>
+    <div class="f"><label>宽度</label><input id="rwid" type="number"></div>
+    <div class="actions"><button class="primary" id="rok">创建房间</button></div>
+  </div>
+  <div class="hint">在画布上拖动即可实时调整矩形；也可在输入框中输入精确尺寸，以起点为基准向拖动方向展开。</div>
+</template>
+<template id="wallEditorPanelTemplate">
+  <div class="grid4">
+    <div class="f"><label>长度</label><input id="editLen" type="number"></div>
+    <div class="f" id="editBulgeWrap"><label>矢高</label><input id="editBulge" type="number"></div>
+    <div class="f" id="editEndField"><label>端点</label><button type="button" class="secondary wall-end-toggle" id="endTog">改B点</button></div>
+  </div>
+  <div class="actions"><button class="primary" id="updateWall">修改</button><button class="danger" id="delWall">删除墙体</button></div>
+  <div class="hint">切换端点后，画布红圈可直接拖动；垂直相连墙线及其门窗构件会同步平移。</div>
+</template>
+<template id="textEditorPanelTemplate">
+  <div class="grid4">
+    <div class="f text-edit-content"><label>文本内容</label><input id="ttxt" type="text"></div>
+    <div class="f"><label>字号</label><select id="tfs" class="text-edit-select"><option value="5">5</option><option value="7">7</option><option value="10">10</option><option value="12">12</option></select></div>
+    <div class="f"><label>颜色</label><select id="tcolor" class="text-edit-select"><option value="#e53935">红色</option><option value="#16a34a">绿色</option><option value="#1677e8">蓝色</option></select></div>
+  </div>
+  <div class="actions"><button class="primary" id="tsave">完成</button><button class="danger" id="tdel">删除</button></div>
+  <div class="hint">拖动文字可移动；拖动右下圆点或双指捏合可缩放字号。</div>
+</template>
+<template id="emptyRoomStatsPanelTemplate">
+  <div class="empty-room-stats">暂未识别到封闭房间。<br><br>请检查墙体端点是否吸附连接并形成闭合轮廓。</div>
+</template>
+<template id="routePanelTemplate">
+  <div class="hint route-panel-hint">选择路线时，画布会同步预览。点击路线名称后，再点击“确认连接”完成绘制。</div>
+  <div id="routeChoices" class="route-choices">
+    <button type="button" class="primary" data-route="0">先横向，再纵向</button>
+    <button type="button" class="secondary" data-route="1">先纵向，再横向</button>
+    <button type="button" class="secondary" data-route="2">直线连接</button>
+  </div>
+  <div class="actions"><button class="primary" id="routeConfirm">确认连接</button><button class="secondary" id="routeCancel">取消</button></div>
+</template>
+<template id="octWallPanelTemplate">
+  <div class="grid4">
+    <div class="f"><label>长边</label><input id="octLong" type="number" min="1"></div>
+    <div class="f"><label>短边</label><input id="octShort" type="number" min="1"></div>
+    <div class="f"><label>深度</label><input id="octDepth" type="number" min="1"></div>
+    <div class="f"><label>距边</label><input id="octEdge" type="number" min="0"></div>
+  </div>
+  <div class="hint">图例已吸附到当前墙线。八角墙固定向闭合空间外侧生成；长边沿墙定位，短边居中，深度控制外伸距离。输入完最后一项参数后，直接按数字键盘上的“✓”创建墙线。</div>
+</template>
+<template id="arcWallPanelTemplate">
+  <div class="grid4">
+    <div class="f"><label>矢高（可为负）</label><input id="abg" type="number"></div>
+    <div class="f"><label>墙厚</label><input id="ath" type="number"></div>
+    <div class="actions"><button class="primary" id="aok">确定</button><button class="secondary arc-flip-button" id="aflip">反向弯曲</button></div>
+  </div>
+  <div class="hint">矢高为弧线中点相对弦长的偏移量，负值表示向另一侧弯曲；调整数值时画布实时预览。</div>
+</template>
+<template id="measureStartNoticePanelTemplate">
+  <div class="measure-start-notice">
+    <div class="measure-start-headline" data-start-headline></div>
+    <div class="measure-start-detail" data-start-detail></div>
+    <div class="measure-start-actions"><button class="primary" id="startMeasureNow"></button></div>
+  </div>
+</template>
+<template id="settingsPanelTemplate">
+  <div class="settings-author">
+    <span>联系方式：15662061321</span>
+    <span class="settings-account-status" data-account-status>授权状态读取中</span>
+  </div>
+  <div class="grid4">
+    <div class="f"><label>单位</label><select id="unitSel" class="settings-unit-select"><option value="mm">MM</option><option value="m">M</option></select></div>
+    <div class="f"><label>层高</label><input id="hgt" type="number"></div>
+    <div class="f"><label>默认墙厚</label><input id="dwt" type="number"></div>
+  </div>
+  <div class="grid4 settings-uuid-grid">
+    <div class="f"><label>蓝牙服务 UUID (Service)</label><input id="btSrv" placeholder="输入设备服务 UUID"></div>
+    <div class="f"><label>蓝牙特征 UUID (Characteristic)</label><input id="btChar" placeholder="输入设备特征 UUID"></div>
+  </div>
+  <div class="actions settings-actions">
+    <button class="secondary settings-save-button" id="settings">保存设置</button>
+    <button class="primary settings-dxf-button" id="dxf">导出CAD</button>
+  </div>
+  <div class="hint">操作自动记忆（300ms 空闲后写入本地缓存），刷新页面自动恢复。</div>
+</template>
+
+
+<template id="roomStatisticsPanelTemplate">
+  <div class="room-stats-count" id="roomStatsCount"></div>
+  <div class="room-stats-table-wrap">
+    <table class="room-stats-table">
+      <thead><tr class="room-stats-head"><th class="room-stats-name-head">区域 (长按改名)</th><th>面积 (m²)</th><th>周长 (m)</th></tr></thead>
+      <tbody id="roomStatsRows"></tbody>
+    </table>
+  </div>
+  <div class="room-stats-total">
+    <span>面积合计：<span class="room-stats-area" id="roomStatsTotalArea"></span></span>
+    <span>周长合计：<span class="room-stats-perimeter" id="roomStatsTotalPerimeter"></span></span>
+  </div>
+  <div class="hint">面积按墙体中心线围合范围计算；弧墙按端点近似，复杂交叉或未闭合边界可能无法正确识别。长按区域名称可修改。</div>
+</template>
+<template id="roomStatisticsRowTemplate">
+  <tr class="room-stats-row">
+    <td class="room-stats-name-cell"><span class="room-name-edit"></span></td>
+    <td class="room-stats-area"></td>
+    <td class="room-stats-perimeter"></td>
+  </tr>
+</template>
+<template id="savedProjectsPanelTemplate">
+  <div class="saved-project-list" id="savedProjectsList"></div>
+  <div class="actions"><button class="secondary" id="closeSavedList">关闭</button></div>
+</template>
+<template id="savedProjectRowTemplate">
+  <div class="saved-project-row">
+    <div class="saved-project-main"><div class="saved-project-name"></div><div class="saved-project-date"></div></div>
+    <button type="button" class="primary saved-project-open">打开</button>
+    <div class="record-actions" hidden><button class="secondary saved-project-rename">改名</button><button class="danger saved-project-delete">删除</button></div>
+  </div>
+</template>
+<template id="savedProjectsEmptyTemplate"><div class="hint saved-project-empty">暂无保存的图纸记录</div></template>
+
+
+<template id="handIconTemplate">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M8 13V5.2a1.55 1.55 0 0 1 3.1 0V12M11.1 11V3.8a1.55 1.55 0 0 1 3.1 0V12M14.2 11V5.3a1.55 1.55 0 0 1 3.1 0v9.1c0 4.1-2.5 6.6-6.2 6.6h-.8c-2.2 0-3.5-1.1-4.6-3L3.8 13.9a1.65 1.65 0 0 1 2.7-1.9L8 13"/>
+  </svg>
+</template>
+<template id="voiceIconTemplate">
+  <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="9" y="2" width="6" height="12" rx="3"></rect><path d="M5 10a7 7 0 0 0 14 0M12 17v5M8 22h8"></path>
+  </svg>
+</template>
+<template id="snapLensTemplate">
+  <div id="snapLens" class="snap-lens">
+    <canvas class="snap-lens-canvas"></canvas>
+    <div class="snap-lens-label"></div>
+  </div>
+</template>
+<template id="measureFloatTemplate"><div id="measureFloat" class="measure-float"></div></template>
+<template id="customToastTemplate"><div id="customToast" class="custom-toast"></div></template>
+<template id="legendGhostTemplate"><div class="legend-ghost"></div></template>
+<template id="numberKeyboardTemplate">
+  <div id="numKeyboard">
+    <div class="num-kb-btn" data-key="1">1</div>
+    <div class="num-kb-btn" data-key="2">2</div>
+    <div class="num-kb-btn" data-key="3">3</div>
+    <div class="num-kb-btn num-kb-voice" data-key="voice"></div>
+    <div class="num-kb-btn" data-key="4">4</div>
+    <div class="num-kb-btn" data-key="5">5</div>
+    <div class="num-kb-btn" data-key="6">6</div>
+    <div class="num-kb-btn" data-key="7">7</div>
+    <div class="num-kb-btn" data-key="8">8</div>
+    <div class="num-kb-btn" data-key="9">9</div>
+    <div class="num-kb-btn" data-key="0">0</div>
+    <div class="num-kb-btn" data-key="⌫">⌫</div>
+    <div class="num-kb-btn" data-key="✓">✓</div>
+    <div class="num-kb-btn num-kb-toggle" data-key="toggle">▲</div>
+  </div>
+</template>
+<template id="settingsTitleActionsTemplate">
+  <div class="settings-title-actions">
+    <button type="button" class="settings-icon-button" data-settings-import title="从本地导入量房数据" aria-label="从本地导入量房数据">↑</button>
+    <button type="button" class="settings-icon-button" data-settings-export title="导出全部数据到本地" aria-label="导出全部数据到本地">↓</button>
+    <button type="button" class="settings-open-button" data-settings-open title="打开已保存图纸">打开</button>
+    <button type="button" class="settings-cloud-button settings-cloud-restore" data-settings-restore>云恢复</button>
+    <button type="button" class="settings-cloud-button settings-cloud-backup" data-settings-backup>云备份</button>
+  </div>
+</template>
+<template id="newProjectPanelTemplate">
+  <div class="grid4">
+    <div class="f"><label>层高（mm）</label><input id="newPHeight" type="number" value="2700"></div>
+    <div class="f"><label>入户门宽（mm）</label><input id="newPDoorWidth" type="number" value="900"></div>
+    <div class="f"><label>入户门高（mm）</label><input id="newPDoorHeight" type="number" value="2100"></div>
+    <div class="f"><label>默认墙厚（mm）</label><input id="newPWallThick" type="number"></div>
+    <div class="f new-project-hand-field"><label>本张图纸的操作方式</label>
+      <div class="new-project-hand-options">
+        <button type="button" id="newPHandLeft" class="new-project-hand-btn" aria-pressed="false"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.2a1.55 1.55 0 0 1 3.1 0V12M11.1 11V3.8a1.55 1.55 0 0 1 3.1 0V12M14.2 11V5.3a1.55 1.55 0 0 1 3.1 0v9.1c0 4.1-2.5 6.6-6.2 6.6h-.8c-2.2 0-3.5-1.1-4.6-3L3.8 13.9a1.65 1.65 0 0 1 2.7-1.9L8 13"/></svg>左手操作</button>
+        <button type="button" id="newPHandRight" class="new-project-hand-btn" aria-pressed="false"><svg class="hand-icon-mirrored" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V5.2a1.55 1.55 0 0 1 3.1 0V12M11.1 11V3.8a1.55 1.55 0 0 1 3.1 0V12M14.2 11V5.3a1.55 1.55 0 0 1 3.1 0v9.1c0 4.1-2.5 6.6-6.2 6.6h-.8c-2.2 0-3.5-1.1-4.6-3L3.8 13.9a1.65 1.65 0 0 1 2.7-1.9L8 13"/></svg>右手操作</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="hint">图纸名称已确认。设置层高、入户门、墙厚，并确认本张图纸的左手或右手操作方式，按数字键盘确认即可创建。</div>
+</template>
+<template id="newProjectRoomPanelTemplate">
+  <div class="grid4 new-project-room-grid">
+    <div class="f"><label>层高（mm）</label><input id="newPHeight" type="number" value="2700"></div>
+    <div class="f"><label>默认墙厚（mm）</label><input id="newPWallThick" type="number"></div>
+  </div>
+  <div class="hint">确认后直接启用“画房间”工具。先在画布上拖出房间矩形，再输入精确长度和宽度。此模式不自动创建入户门。</div>
+</template>
 
 <!-- 程序模块加载 -->
 <script src="base.js" defer></script>
